@@ -1,5 +1,7 @@
-shortcode
-#Список снаряжения
+shortcodes
+
+##at_gear_list - Список снаряжения
+
 use - необязательный параметр
 
 use=? slug терма из таксономии "recommended_use"
