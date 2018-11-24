@@ -1,0 +1,57 @@
+/*---------------------------------------
+2. Tabs
+-----------------------------------------*/
+/**
+ * Tabs
+ * https://codepen.io/mikestreety/pen/yVNNNm
+ */
+.tabs {
+	display: flex;
+	flex-wrap: wrap; // make sure it wraps
+}
+.tabs > label {
+	order: 1; // Put the labels first
+	display: block;
+	padding: 0.5rem 1rem;
+	margin-right: 0.1rem;
+	cursor: pointer;
+  background: rgb(232, 232, 232); /*#90CAF9;*/
+  font-weight: bold;
+  transition: background ease 0.2s;
+}
+.tabs .tab {
+  order: 99; // Put the tabs last
+  flex-grow: 1;
+	width: 100%;
+	display: none;
+  padding: 0.5rem;
+  background: #fff;
+}
+.tabs input[type="radio"] {
+	display: none;
+}
+.tabs > label:hover {
+	background-color: #90DFFF;
+}
+.tabs input[type="radio"]:checked + label {
+	background: #fff;
+	cursor: default;
+	border-style: solid;
+	border-width: 1px 1px 0px 1px;
+	border-color: lightgrey;	
+}
+.tabs input[type="radio"]:checked + label + .tab {
+	display: block;
+}
+
+@media (max-width: 45em) {
+  .tabs .tab,
+  .tabs > label {
+    order: initial;
+  }
+  .tabs > label {
+    width: 100%;
+    margin-right: 0;
+    margin-top: 0.1rem;
+  }
+}
