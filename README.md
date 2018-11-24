@@ -1,6 +1,6 @@
-shortcodes
+## shortcodes
 
-##at_gear_list - Список снаряжения
+### at_gear_list - Список снаряжения
 
 use - необязательный параметр
 
