@@ -11,30 +11,33 @@ namespace AT_Trip;
  */
 //use function AT_Lib\doSave;
  
+ 
 final class AdminMetaboxes {
-
+	private const MAGIC_POST_CONTENT    = 'at_trip_editor';
+	private const SAVE_POST_ACTION_NAME = 'saveMetaData';
+	
 	private const NONCE_NAME = 'trip_noncename';
-	private const ACTION_NAME = 'at_trip_save_data_process';		
+	private const ACTION_NAME = 'trip_save_data_process';		
+	
 	
 	public function __construct() {
-
 		add_action( 'add_meta_boxes_' .  AT_TRIP_POST_TYPE, [ &$this, 'registerMetaboxes'], 10, 2 );
 		add_action( 'do_meta_boxes', '\AT_Lib\removeMetaboxes', 10, 2 );
-		add_action( 'save_post',     [ &$this, 'saveMetaData' ] );
-		
+		add_action( 'save_post',     [ &$this, self::SAVE_POST_ACTION_NAME ] );
 	}
 	
+	
 	public function saveMetaData( $post_id ) {
-		if (!\AT_Lib\checkBeforeSave( $post_id, AT_TRIP_POST_TYPE, self::NONCE_NAME, self::ACTION_NAME )) {
-			return;
+		if (\AT_Lib\checkBeforeSave( $post_id, AT_TRIP_POST_TYPE, self::NONCE_NAME, self::ACTION_NAME )) {
+			$this->doSave( $post_id );
 		}
-		$this->doSave( $post_id );
 	}	
+	
 	
 	public function registerMetaboxes() {
 		add_meta_box( 'trip_meta_box1', 'Trip Info',         [ &$this, 'render_info_callback' ],              AT_TRIP_POST_TYPE, 'normal', 'high' );
 
-		add_meta_box( 'trip_meta_box2`', 'Dates',           [ &$this, 'render_dates_callback' ],             AT_TRIP_POST_TYPE, 'normal', 'default');
+		add_meta_box( 'trip_meta_box2`', 'Dates',           [ &$this, 'render_dates_callback' ],              AT_TRIP_POST_TYPE, 'normal', 'default');
 
 		add_meta_box( 'trip_meta_box3', 'Trip Registration', [ &$this, 'render_registration_form_callback' ], AT_TRIP_POST_TYPE, 'normal', 'default' );
 		add_meta_box( 'trip_meta_box4', 'Trip Price',        [ &$this, 'render_price_callback' ],             AT_TRIP_POST_TYPE, 'normal', 'default' );
@@ -145,7 +148,10 @@ final class AdminMetaboxes {
 		$helper = new TripData( $post );
 		$trip_registration_enabled  = $helper->get_registration_enabled();
 		$trip_registration_end_date	= $helper->get_registration_end_date();
-		$trip_registration_form	    = $helper->get_registration_form();
+		
+		if (AT_TRIP_USE_GOOGLE_FORMS) {
+			$trip_registration_url	    = $helper->get_registration_url();
+		}
 		?>
 		
 		<table>
@@ -157,14 +163,17 @@ final class AdminMetaboxes {
 				<td><label for="trip_registration_end_date">Дата окончания регистрации</label></td>
 				<td><input type="text" name="trip_registration_end_date" id="trip-registration-end-date" value="<?php echo $trip_registration_end_date; ?>"></td>
 			</tr>
+			<?php if(AT_TRIP_USE_GOOGLE_FORMS) :?>
 			<tr class="trip-registration-row" style="display:<?php echo ( 1 === $trip_registration_enabled ) ? 'table-row' : 'none'; ?>">
-				<td><label for="trip_registration_form">Ссылка</label></td>
-				<td><input size="80" maxlength="128" type="url" name="trip_registration_form" value="<?php echo $trip_registration_form; ?>"><br/><i>Допускаются ссылки только на Google Forms</i></td>
+				<td><label for="trip_registration_url">Ссылка</label></td>
+				<td><input size="80" maxlength="128" type="url" name="trip_registration_url" value="<?php echo $trip_registration_url; ?>"><br/><i>Допускаются ссылки только на Google Forms</i></td>
 			</tr>
+			<?php endif; ?>
 
 		</table>
 		<?php
 	}
+	
 	
 	function render_price_callback( $post ) {
 	
@@ -248,7 +257,7 @@ final class AdminMetaboxes {
 			<input type="radio" name="tabs" id="tabone" checked="checked">
 			<label for="tabone">Описание</label>
 			<div class="tab">
-				<?php wp_editor( $post->post_content, 'at_trip_editor' ); ?>
+				<?php wp_editor( $post->post_content, self::MAGIC_POST_CONTENT ); ?>
 			</div>
 
 			<input type="radio" name="tabs" id="tabtwo">
@@ -309,8 +318,9 @@ final class AdminMetaboxes {
 		<?php
 	}	
 	
+	
 	protected function doSave( $post_id ) {
-		\AT_Lib\save_fields_a( $post_id, [
+		$afields = [
 			['trip_sticky',   'bool'],		
 			
 			['trip_show_dates',      'bool'],		
@@ -340,10 +350,16 @@ final class AdminMetaboxes {
 			
 			['trip_registration_enabled',  'bool'],		
 			['trip_registration_end_date', 'time'],
-			['trip_registration_form',	   'reg_form_url'],
-		] );
+			
+		];
 		
+		if (AT_TRIP_USE_GOOGLE_FORMS) {
+			$afields[] = ['trip_registration_url',	   'reg_form_url'];
+		}
+		
+		\AT_Lib\save_fields_a( $post_id, $afields );
 
+		
 		$fields = [
 			new RelatedTripsField($post_id), 
 			new PriceListField($post_id),
@@ -354,24 +370,29 @@ final class AdminMetaboxes {
 		foreach ($fields as $field) {
 			$field->save();
 		}
-			
+		
+		
+		$this->saveMagicPostContent($post_id);
+	}
 	
-		if ( isset( $_POST['at_trip_editor'] ) ) {
-			$new_content = $_POST['at_trip_editor'];
-			$old_content = get_post_field( 'post_content', $post_id );
-			if ( ! wp_is_post_revision( $post_id ) && $old_content !== $new_content ) {
-				$args = [
-					'ID' => $post_id,
-					'post_content' => $new_content,
-				];
+	
+	private function saveMagicPostContent($post_id) {
+		if ( !isset( $_POST[self::MAGIC_POST_CONTENT] ) ) {
+			return;
+		}
 
-				// Unhook this function so it doesn't loop infinitely.
-				remove_action( 'save_post', [&$this, 'saveMetaData'] );
-				// Update the post, which calls save_post again.
-				wp_update_post( $args );
-				// Re-hook this function.
-				add_action( 'save_post', [&$this, 'saveMetaData'] );
-			}
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+
+		$new_content = $_POST[self::MAGIC_POST_CONTENT];
+
+		if ( get_post_field( 'post_content', $post_id ) !== $new_content ) {
+			remove_action( 'save_post', [&$this, self::SAVE_POST_ACTION_NAME] );
+			
+			wp_update_post( [ 'ID' => $post_id, 'post_content' => $new_content ] );
+			
+			add_action( 'save_post', [&$this, self::SAVE_POST_ACTION_NAME] );
 		}
 	}
 }

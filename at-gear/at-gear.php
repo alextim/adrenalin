@@ -20,6 +20,7 @@ function AT_Gear() {
 }
 AT_Gear();
 
+
 final class AT_Gear {
 	private static $instance = null;
 	
@@ -30,11 +31,13 @@ final class AT_Gear {
         return self::$instance;
     } 	
 	
+	
 	private function __construct() {
 		$this->define_constants();
 		$this->includes();
 		$this->init_hooks();	
 	}
+
 	
 	private function define_constants() {
 		define( 'AT_GEAR_POST_TYPE', 'gear' );
@@ -43,6 +46,7 @@ final class AT_Gear {
 		define( 'AT_GEAR_PLUGIN_DIR', untrailingslashit( dirname( AT_GEAR_PLUGIN_FILE ) ) );
 		define( 'AT_GEAR_ABSPATH', dirname( __FILE__ ) . '/' );
 	}
+	
 	
 	private function includes() {
 		require AT_GEAR_ABSPATH . '/inc/class-post-types.php';
@@ -56,11 +60,12 @@ final class AT_Gear {
 		require AT_GEAR_ABSPATH . '/inc/class-shortcode.php';
 		
 		if ( is_admin() ) {
-			require AT_GEAR_ABSPATH . '/inc/admin/class-taxonomy-metafields.php';
+			//add_action( 'pre_get_terms', [&$this, 'modify_ctx_query'] );
 			require AT_GEAR_ABSPATH . '/inc/admin/class-gear-type-admin-metaboxes.php';
-			require AT_GEAR_ABSPATH . '/inc/admin/class-gear-admin-metaboxes.php';
+			require AT_GEAR_ABSPATH . '/inc/admin/class-admin-metaboxes.php';
 		}
 	}
+	
 	
 	private function init_hooks() {
 		register_activation_hook( __FILE__, function () {
@@ -77,7 +82,11 @@ final class AT_Gear {
 		add_action( 'init', [ '\AT_Gear\Taxonomies', 'init' ] );
 		
 		if ( is_admin() ) {
-			$mb = new GearAdminMetaboxes();
+			$mb = new AdminMetaboxes();
 		}
 	}
+	
+	
+	//function modify_ctx_query( $query ) {
+	//}
 }

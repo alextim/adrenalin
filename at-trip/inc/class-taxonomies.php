@@ -8,6 +8,7 @@ final class Taxonomies {
 		self::register_destination_taxonomy();
 		self::register_trip_type_taxonomy();
 		self::register_keyword_taxonomy();
+		self::register_season_taxonomy();
 	}
 	
 	
@@ -124,5 +125,33 @@ final class Taxonomies {
 		];
 
 		register_taxonomy( 'trip_keyword', [ AT_TRIP_POST_TYPE ], $args );
+	}
+	
+	private static function register_season_taxonomy() {
+		
+		$labels = [
+			'name'              => 'Сезон',
+			'singular_name'     => 'Сезон',
+			'search_items'      => __( 'Search Seasons', 'at-trip' ),
+			'all_items'         => __( 'All Seasons', 'at-trip' ),
+			'parent_item'       => __( 'Parent Season', 'at-trip' ),
+			'parent_item_colon' => __( 'Parent Season:', 'at-trip' ),
+			'edit_item'         => __( 'Edit Season', 'at-trip' ),
+			'update_item'       => __( 'Update Season', 'at-trip' ),
+			'add_new_item'      => __( 'Add New Season', 'at-trip' ),
+			'new_item_name'     => __( 'New Season', 'at-trip' ),
+			'menu_name'         => __( 'Seasons', 'at-trip' ),
+		];
+
+		$args = [
+			'hierarchical'      => true,
+			'labels'            => $labels,
+			'show_ui'           => true,
+			'show_admin_column' => false,
+			'query_var'         => true,
+	//		'rewrite'           => [ 'slug' => 'season' ],
+		];
+
+		register_taxonomy( 'season', [ AT_TRIP_POST_TYPE ], $args );
 	}
 }

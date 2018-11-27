@@ -9,16 +9,20 @@ namespace AT_Trip;
 final class TripView {
 	private $tripData;
 	
+	
 	function __construct( $post = null ) {
 		$this->tripData = new TripData( $post );
-
-		return $this->tripData->post;
 	}
 
+	public function getRelatedTrips() {
+		return $this->tripData->getRelatedTripsField()->getRelatedTrips();
+	}
+	
 	
 	function format_days(int $days) : string {
 		return ( $days > 0 ) ? \AT_lib\num2form($days, 'день', 'дня', 'дней') : '';
 	}
+	
 	
 	function format_nights(int $nights): string  {
 		return ( $nights > 0 ) ? \AT_lib\num2form($nights, 'ночь', 'ночи', 'ночей') : '';
@@ -40,8 +44,6 @@ final class TripView {
 		$s .= '</div>';
 		echo $s;
 	}
-	
-	
 
 	
 	private function print_level_html( $title, $value ) {
@@ -83,13 +85,50 @@ final class TripView {
 		}		
 	}
 	
+	private function format_date_duration_s(string $start_date, int $duration, $date_format_mask) {
+		$s = '';
+		if ( !empty($start_date) ) {
+			if (0 == $duration) {
+				$duration = 1;
+			}
+			
+			$s = $start_date;
+			if ( $duration > 1 ) {
+				$end_date = date($date_format_mask, strtotime($start_date . ' + ' . ($duration - 1) . ' days'));
+				$s .= '&nbsp;-&nbsp;' . $end_date;
+			}
+		}
+		return $s;		
+	}
 	
 	function print_date_range() {
-		$f = $this->tripData->getDateRangeField();
+		$values = $this->tripData->getDateRangeField()->get();
+
+		if (!$values || !is_array($values)) {
+			return;
+		}
 		
-		$f->durationDays = $this->tripData->get_duration_days();
+		$durationDays = $this->tripData->get_duration_days();
 		
-		$f->renderDisplay();
+		$i = 0;
+
+		foreach ( $values as $field ) {
+			$start_date = $field['startdate'];
+			if ( !empty($start_date) ) {
+				$start_date = date( $this->tripData->date_format_mask, (int)$start_date );
+				$s = $this->format_date_duration_s($start_date, $durationDays, $this->tripData->date_format_mask);
+				if ( !empty($s) ) {
+					if ( 0 === $i ) {
+						print_info_item( get_fa('calendar'), $s );
+						$i++;
+						
+					} else {
+						
+						print_info_item( '<i class="fa">&nbsp;&nbsp;&nbsp;&nbsp;</i>', $s );
+					}
+				}
+			}
+		}		
 	}	
 	
 	
@@ -128,9 +167,13 @@ final class TripView {
 		print_info_item( get_fa('calendar'), $result );		
 	}
 */	
-
-	function print_registration_form(string $title, string $id = '', string $class = '') {
+	function print_registration_url(string $title, string $id = '', string $class = '') {
 		if ( !$this->tripData->get_registration_enabled() ) {
+			return;
+		}
+
+		$s = $this->tripData->get_registration_url();
+		if ( empty($s) ) {
 			return;
 		}
 		
@@ -141,18 +184,16 @@ final class TripView {
 			}
 		}
 
-		$s = $this->tripData->get_registration_form();
-		if ( !empty($s) ) {
-			if (!empty($id)) {
-				$id = ' id="' . esc_attr($id) . '" ';
-			}			
-			if (!empty($class)) {
-				$class = ' class="' . esc_attr($class) . '" ';
-			}
-			echo '<a ' . $id .  $class . ' target="_blank" rel="noopener nofollow" href="' . $s . '">' . esc_html($title) . '</a>';
+		if (!empty($id)) {
+			$id = ' id="' . esc_attr($id) . '" ';
+		}			
+
+		if (!empty($class)) {
+			$class = ' class="' . esc_attr($class) . '" ';
 		}
+		echo '<a ' . $id .  $class . ' target="_blank" rel="noopener nofollow" href="' . $s . '">' . esc_html($title) . '</a>';
 	}
-	
+
 	
 	function print_duration() {
 		$s = $this->format_days( $this->tripData->get_duration_days());
@@ -263,9 +304,6 @@ final class TripView {
 		$gallery        = $this->tripData->get_gallery();
 		
 		$tabs = [];
-		
-		$this->tripData->getRelatedTripsField()->renderDisplay();
-
 		
 		if ( !empty($description) ) {
 			$tabs[] = new Tab( 'tabone', 'Описание', $description );

@@ -2,11 +2,12 @@
 declare(strict_types=1);
 namespace AT_Gear;
 
+
 class GearHierarchy extends TaxonomyHierarchyBase {
-	//'gear_type_sort_order'
 	public function __construct( string $slug2, bool $hide_empty ) {
-		parent::__construct( 'gear_type', AT_GEAR_POST_TYPE, 'recommended_use', $slug2, 'gear_type_meta', 'order', 'url', $hide_empty );
+		parent::__construct( 'gear_type', AT_GEAR_POST_TYPE, 'recommended_use', $slug2, 'gear_type_order', 'gear_type_url', $hide_empty );
 	}
+	
 	
 	protected function GetLeaf() : array {
 		global $post;

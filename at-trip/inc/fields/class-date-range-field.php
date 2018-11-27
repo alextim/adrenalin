@@ -17,9 +17,28 @@ final class DateRangeField extends MultilineRepeaterField {
 		parent::__construct('trip_dates', $postID, $input_names, 'd', 'Список дат путешествий', true, false);
     }
 	
+	public function get() {
+		return TripDates::getDates($this->postID);
+		//return get_post_meta($this->postID, $this->name, false);
+	}	
+	
+	public function save() {
+		$old = $this->get();
+		$new = $this->prepareArray();
+		var_dump('old');
+		var_dump($old);
+		var_dump('new');
+		var_dump($new);
+
+		if ( !empty( $new ) && $new != $old )
+			update_post_meta( $this->postID, $this->name, $new );
+		elseif ( empty($new) && $old )
+			delete_post_meta( $this->postID, $this->name, $old );		
+	}
+	
 	protected function renderItemContent($item, int $i) {
 		$val = '';
-		
+
 		if ($i !== 0) {
 			$val   = $item[ $this->main_key ];
 			if ($val != '') {
@@ -44,55 +63,6 @@ final class DateRangeField extends MultilineRepeaterField {
 	protected function _printJS() {?>
 		$('input.<?php echo $this->main_key; ?>').datepicker({ minDate: new Date()});
 <?php }
-
-
-	public function renderDisplay() {
-		$values = $this->get();
-
-		if (!$values) {
-			return;
-		}
-		if (!is_array($values)) {
-			return;
-		}
-		
-		
-		$i = 0;
-
-			
-		foreach ( $values as $field ) {
-			$start_date = $field['startdate'];
-			if ( !empty($start_date) ) {
-				$start_date = date( $this->date_format_mask, (int)$start_date );
-				$s = $this->format_date_duration_s($start_date, $this->durationDays);
-				if ( !empty($s) ) {
-					if ( 0 === $i ) {
-						print_info_item( get_fa('calendar'), $s );
-						$i++;
-						
-					} else {
-						
-						print_info_item( '<i class="fa">&nbsp;&nbsp;&nbsp;&nbsp;</i>', $s );
-					}
-				}
-			}
-		}		
-	}
 	
-	private function format_date_duration_s(string $start_date, int $duration) {
-		$s = '';
-		if ( !empty($start_date) ) {
-			if (0 == $duration) {
-				$duration = 1;
-			}
-			
-			$s = $start_date;
-			if ( $duration > 1 ) {
-				$end_date = date($this->date_format_mask, strtotime($start_date . ' + ' . ($duration - 1) . ' days'));
-				$s .= '&nbsp;-&nbsp;' . $end_date;
-			}
-		}
-		return $s;		
-	}
-		
+	public function getHtml() : string { return ''; }
 }

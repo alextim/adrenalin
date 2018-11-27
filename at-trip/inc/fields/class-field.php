@@ -14,12 +14,13 @@ abstract class Field {
 	
 	public abstract function get();		
 	public abstract function renderInput();
-	public abstract function renderDisplay();
+	public abstract function getHtml() : string;
 	
 	public function getName() : string { return $this->name; }
 
 	abstract public function save();
 }
+
 
 abstract class TextField extends Field {
 	public function save() {

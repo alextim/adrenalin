@@ -24,72 +24,51 @@ final class PriceListField extends MultilineRepeaterField {
 	}
 	
 	
-	public function renderDisplay() {
-		echo $this->getHtml();
-	}
-	
-	
-	public function getHtml() {
-
+	public function getHtml() : string {
 		$values = $this->get();
-
-		if (!$values) {
-			return '';
-		}
-		if (!is_array($values)) {
+		if (!$values || !is_array($values)) {
 			return '';
 		}
 		
 		if (isset($currency)) {
 			$currency = \AT_Lib\getCurrencySymbol($currency);
 		}		
-
-		$s = '<div class="price-list-wrap">';
-		$s .= '<table>';
-		$s .= '<thead><tr>';
-		$s .= '<th>Количество участников</th>';
-		$s .= '<th>Стоимость на одного участника</th>';
-		$s .= '</tr></thead>';
-		$s .= '<tbody>';
-		
-		foreach ($values as $item) {
-			$full_price = intval($item['pl_full_price']);
-			$sale_price = 0;
-			
-			$s .= '<tr>';
-
-			$s .= '<td>';
-			$s .= $item['pl_description'];
-			$s .= '</td>';
-			
-			$s .= '<td>';
-			$enable_sale = $this->enable_sale;
-			if ( $full_price > 0 ) {
-				if ( $enable_sale ) {
-					$sale_price  = intval($item['pl_sale_price']);
-					$enable_sale = ($sale_price > 0);
-				}
+		ob_start(); ?>
+<div class="price-list-wrap">
+	<table>
+		<thead>
+			<tr>
+				<th>Количество участников</th>
+				<th>Стоимость на одного участника</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php foreach ($values as $item) : $full_price = intval($item['pl_full_price']); $sale_price = 0;?>
+			<tr>
+				<td><?php echo $item['pl_description']; ?></td>
+				<td>
+				<?php $enable_sale = $this->enable_sale;
+				if ( $full_price > 0 ) :
+					if ( $enable_sale ) {
+						$sale_price  = intval($item['pl_sale_price']);
+						$enable_sale = ($sale_price > 0);
+					} ?>
 				
-				$s .= '<span class="trip-info-value' . ($enable_sale ? ' old-price' : '') . '">' . $full_price;
-				$s .= '&nbsp;' . $this->currency;
-				$s .= '</span>';
-				
-				if ( $enable_sale ) {
-					$s .= '<span class="trip-info-value sale-price">' . $sale_price;
-					$s .= '&nbsp;' . $this->currency;
-					$s .= '</span>';
-				}
-			}
-			$s .= '</td>';
-			
-			
-			$s .= '</tr>';
-		}
-
-		$s .= '</tbody>';
-		$s .= '</table>';
-		$s .= '</div>';
-		
+					<span class="trip-info-value<?php if ($enable_sale) echo 'old-price';?>"><?php echo $full_price . '&nbsp;' . $this->currency; ?></span>
+					
+					<?php if ( $enable_sale ) :?>
+						<span class="trip-info-value sale-price"><?php echo $sale_price . '&nbsp;' . $this->currency;?></span>
+					<?php endif;
+				endif; ?>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		</tbody>
+	</table>
+</div>
+<?php		
+		$s = ob_get_contents();
+		ob_end_clean();
 		return $s;
 	}
 }

@@ -4,7 +4,6 @@ namespace AT_Gear;
 
 abstract class TaxonomyHierarchyBase {
 	private $hide_empty;
-	private $meta_key;
 	private $index;
 	private $index2;
 
@@ -14,10 +13,9 @@ abstract class TaxonomyHierarchyBase {
 	
 	protected abstract function getLeaf() : array;
 	
-	public function __construct(string $taxonomy, string $post_type, string $taxonomy2, string $slug2, string $meta_key, string $index, string $index2, bool $hide_empty) {
+	public function __construct(string $taxonomy, string $post_type, string $taxonomy2, string $slug2, string $index, string $index2, bool $hide_empty) {
 		$this->hide_empty = $hide_empty;
 		
-		$this->meta_key   = $meta_key;
 		$this->index      = $index;
 		$this->index2     = $index2;
 		
@@ -73,40 +71,18 @@ abstract class TaxonomyHierarchyBase {
 		return $leaves;
 	}
 	
+	
 	private function getTerms( int $parent ) : array {
 		$args = $this->args_template;
 		$args['parent'] = $parent;
-		
-		$terms = get_terms($args);
-		
-		if (empty($this->meta_key)) {
-			return $terms;
-		}
-		
-		$tmp = [];
-		
-		foreach ( $terms as $term ) {
-			$meta = get_term_meta($term->term_id, $this->meta_key, false);
-			$sort_order = $meta[0][$this->index];
-			$url        = $meta[0][$this->index2];
-			$tmp[] = [$sort_order, $url, $term];
-		}
 
-		usort( $tmp, function($a, $b) {
-			if ($a[0]==$b[0]) return 0;
-			return $a[0]>$b[0] ? 1 : -1;
-		});
-		
-		$ordered_terms = [];
-		foreach ( $tmp as $item ) {
-			if ( !empty($item[1]) ) {
-				$item[2]->url = $item[1];
+		return \AT_Lib\getTermsSortedByMeta($args, $this->index, function ($term) {
+			$url = get_term_meta($term->term_id, $this->index2, true);
+			if (!empty($url)) {
+				$term->url = $url;
 			}
-			$ordered_terms[] = $item[2];;
-		}
-		
-
-		return $ordered_terms;
+			return $term;
+		});
 	}
 	
 	

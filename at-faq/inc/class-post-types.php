@@ -1,11 +1,8 @@
 <?php
 declare(strict_types=1);
+namespace AT_Faq;
 
-final class AT_FAQ_Post_Types {
-
-	public function __construct() {
-	}
-
+final class PostTypes {
 	public static function init() {
 		self::register_faq();
 	}

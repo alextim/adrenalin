@@ -29,6 +29,11 @@ foreach ($files as $file) {
 }
 
 if ( is_admin() ) {
+	/*
+			require AT_GEAR_ABSPATH . '/inc/admin/class-taxonomy-metafield-base.php';
+			require AT_GEAR_ABSPATH . '/inc/admin/class-taxonomy-metafields.php';
+			require AT_GEAR_ABSPATH . '/inc/admin/class-taxonomy-admin-metaboxes.php';
+	*/
 	$files = glob(AT_LIB_ABSPATH . '/inc/admin/*.php');
 	foreach ($files as $file) {
 		include  $file;

@@ -61,7 +61,7 @@ final class TripData extends \AT_Lib\DataHelperBase {
 
 	public function get_registration_enabled()  : int    { return parent::getInt( 'trip_registration_enabled' ); }
 	public function get_registration_end_date() : string { return parent::getDate_( 'trip_registration_end_date' ); }
-	public function get_registration_form()     : string { return parent::getUrl( 'trip_registration_form' ); }
+	public function get_registration_url()     : string { return parent::getUrl( 'trip_registration_url' ); }
 	
 
 	public function get_trip_type_list( string $before = '', string $sep = ', ', string $after = '' )  : string {

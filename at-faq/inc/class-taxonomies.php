@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
+namespace AT_Faq;
 
-final class At_FAQ_Taxonomies {
 
+final class Taxonomies {
 	public static function init() {
-		self::register_faq_types();
+		self::registerFaqCategory();
 	}
 
-	private static function register_faq_types() {
+	
+	private static function registerFaqCategory() {
 		$labels = [
 			'name'          => 'FAQ Category',
 			'add_new_item'  => 'Add New FAQ Category',

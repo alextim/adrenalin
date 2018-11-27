@@ -147,17 +147,10 @@ final class OutlineDaysField extends MultilineRepeaterField {
 <?php	
 	}
 	
-	public function renderDisplay() {
-		echo getHtml();
-	}
-	
 	public function getHtml() : string {
 		$values = $this->get();
 
-		if (!$values) {
-			return '';
-		}
-		if (!is_array($values)) {
+		if (!$values || !is_array($values)) {
 			return '';
 		}
 		$day_counter = 0; 
@@ -185,7 +178,5 @@ final class OutlineDaysField extends MultilineRepeaterField {
 <?php   $s = ob_get_contents();
 		ob_end_clean();
 		return $s;
-		
 	}
-		
 }

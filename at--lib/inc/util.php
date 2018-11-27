@@ -1,6 +1,7 @@
 <?php
-declare(strict_types=1);
 namespace AT_Lib;
+
+
 
 
 function getIP() : string {
@@ -116,6 +117,4 @@ function getDateFormatMask() : string {
 		$date_format_mask = 'd.m.Y';
 	}
 	return $date_format_mask;
-}
-
-	
+}	

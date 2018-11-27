@@ -37,6 +37,10 @@ final class AT_Trip {
 	}
 	
 	private function define_constants() {
+		define ('AT_TRIP_USE_GOOGLE_FORMS', true);
+		
+		define( 'AT_TRIP_PLUGIN_NAME',  'AT_Trip' );
+		
 		define( 'AT_TRIP_POST_TYPE', 'trip' );
 		
 		define( 'AT_TRIP_ITEMS_PER_ROW', 3 );
@@ -58,6 +62,8 @@ final class AT_Trip {
 		require AT_TRIP_ABSPATH . '/inc/fields/class-price-list-field.php';
 		require AT_TRIP_ABSPATH . '/inc/fields/class-related-trips-field.php';		
 		
+		require AT_TRIP_ABSPATH . '/inc/search/class-search-form.php';		
+		
 		require AT_TRIP_ABSPATH . '/inc/class-tab.php';
 		require AT_TRIP_ABSPATH . '/inc/class-trip-data.php';
 		require AT_TRIP_ABSPATH . '/inc/class-trip-view.php';
@@ -67,6 +73,7 @@ final class AT_Trip {
 		if ( is_admin() ) {
 			require AT_TRIP_ABSPATH . '/inc/admin/admin-helper.php';
 			require AT_TRIP_ABSPATH . '/inc/admin/class-admin-metaboxes.php';
+			require AT_TRIP_ABSPATH . '/inc/admin/class-season-admin-metaboxes.php';
 			require AT_TRIP_ABSPATH . '/inc/admin/class-admin-assets.php';
 		}
 	}
@@ -115,7 +122,6 @@ final class AT_Trip {
 						$query->set( 'posts_per_page', AT_TRIP_ITEMS_PER_PAGE );
 					}
 
-
 				}
 			} elseif ( $query->is_tax ) {
 				if ( isset($query->query['activity']) ) {
@@ -125,5 +131,4 @@ final class AT_Trip {
 		}
 		return $query;
 	}
-
 }

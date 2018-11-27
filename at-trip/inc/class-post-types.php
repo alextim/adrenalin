@@ -11,10 +11,10 @@ final class PostTypes {
 	private static function register_trip() {
 		//$permalink = at_trip_get_permalink_structure();
 		$labels = [
-			'name'               => 'Мероприятия',
-			'singular_name'      => 'Мероприятие', 
-			'menu_name'          => 'Мероприятия',
-			'name_admin_bar'     => 'Мероприятие', 
+			'name'               => 'Путешествия',
+			'singular_name'      => 'Путешествие', 
+			'menu_name'          => 'Путешествия',
+			'name_admin_bar'     => 'Путешествие', 
 			'add_new'            => 'Add New',
 			'add_new_item'       => 'Add New Trip',
 			'new_item'           => 'New Trip',
