@@ -52,6 +52,11 @@ id="answer-{post_id}"
 [at_gear_list use='rock-climbing']
 ```
 ## Путешествия
+### Прайс-лист
+
+#### Оформление: классы CSS
+- price-list-wrap
+### форма Регистрации 
 Для использования встроенной формы Регистрации из плагина "AT Contact Form" переопределите константу в плагине AT Trip (Путешествия) в файле `at-trip.php`.
 ```
 define ('AT_TRIP_USE_GOOGLE_FORMS', false);
