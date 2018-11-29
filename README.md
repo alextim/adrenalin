@@ -1,4 +1,4 @@
-## FAQ
+## Тип поста: FAQ
 ### Оформление: классы CSS
 - faq
 - faq-questions
@@ -35,7 +35,7 @@ id="answer-{post_id}"
 [at_faq use='rock-climbing']
 ```
 
-## Снаряжение
+## Тип поста: Снаряжение
 ### Оформление: классы CSS
 - gear-list
 ### Вывод на экран
@@ -51,7 +51,7 @@ id="answer-{post_id}"
 [at_gear_list use="rock-climbing"]
 [at_gear_list use='rock-climbing']
 ```
-## Путешествия
+## Тип поста: Путешествия
 ### Прайс-лист
 
 #### Оформление: классы CSS
