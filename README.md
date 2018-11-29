@@ -1,27 +1,26 @@
-Поле Sort Order в Таксономиях не работает, т.к. в Вордпресе это нереализовано
+## FAQ
+### Оформление: классы CSS
+- faq
+- faq-questions
+- faq-answers
 
-## Путешествия
-Для использования встроенной формы Регистрации из плагина "AT Contact Form" переопределите константу в плагине AT Trip (Путешествия) в файле `at-trip.php`.
+
+Ко всем вопросам добавлен аттрибут href с post_id 
 ```
-define ('AT_TRIP_USE_GOOGLE_FORMS', false);
-```
+href="#answer-{post_id}"
 
-## shortcodes
-
-### at_gear_list
-Выводит список снаряжения, отсортированный по полю Sort Order из  таксономии "gear_type"
-
-`use` - необязательный параметр для фильтрации продуктов по slug-у терма из таксономии "recommended_use".
-
-Без `use` будут выведены все имеющиеся записи.
-```
-[at_gear_list] 
-[at_gear_list use=rock-climbing]
-[at_gear_list use="rock-climbing"]
-[at_gear_list use='rock-climbing']
 ```
 
-### at_faq
+
+Ко всем ответам добавлен аттрибут id с post_id 
+```
+id="answer-{post_id}"
+
+```
+
+### Вывод на экран
+Шорткод at_faq
+
 Параметры
 - `toc=1` вывод оглавления перед Faq
 - `toc=0` без оглавления
@@ -35,3 +34,27 @@ define ('AT_TRIP_USE_GOOGLE_FORMS', false);
 [at_faq toc=0 limit=10]
 [at_faq use='rock-climbing']
 ```
+
+## Снаряжение
+### Вывод на экран
+Шорткод at_gear_list
+Выводит список снаряжения, отсортированный по полю Sort Order из  таксономии "gear_type"
+
+`use` - необязательный параметр для фильтрации продуктов по slug-у терма из таксономии "recommended_use".
+
+Без `use` будут выведены все имеющиеся записи.
+```
+[at_gear_list] 
+[at_gear_list use=rock-climbing]
+[at_gear_list use="rock-climbing"]
+[at_gear_list use='rock-climbing']
+```
+## Путешествия
+Для использования встроенной формы Регистрации из плагина "AT Contact Form" переопределите константу в плагине AT Trip (Путешествия) в файле `at-trip.php`.
+```
+define ('AT_TRIP_USE_GOOGLE_FORMS', false);
+```
+
+
+
+
