@@ -39,16 +39,6 @@
 <a target="_blank" rel="noopener nofollow" href="https://alp.od.ua/">Альпклуб</a>
 ```
 
-Неправильно:
-```html
-<a href="https://travel.adrenalin.od.ua/trips/hoverla-petros-climb-light-no-backpack/"Восхождение на Говерлу</a>
-```
-
-Правильно:
-```html
-<a href="/trips/hoverla-petros-climb-light-no-backpack/"Восхождение на Говерлу</a>
-```
-
 ## Перечисления и списки
 Не создавайте списки вручную при поможи тире/цифры и перевода строки.
 
@@ -127,8 +117,12 @@
 
 ### Поле "Изображение записи"
 Файл должен иметь осмысленное название, отражающее содержание картинки, и состоящее из ключевых слов для SEO.
+Неправильно:
+```
+DSC0123200419.jpg
+```
 
-Например:
+Правильно:
 ```
 montblanc-summit-ridge-view.jpg
 ```
