@@ -68,11 +68,11 @@
 
 :bulb: Отступы только для наглядности. Форматирование задается централизованно.
 # Инструменты для проверки
-https://glvrd.ru/
-https://kparser.com
-https://copywritely.com
-https://sitechecker.pro
-https://a.pr-cy.ru/tools/content/
+- https://glvrd.ru/
+- https://kparser.com
+- https://copywritely.com
+- https://sitechecker.pro
+- https://a.pr-cy.ru/tools/content/
 
 # Поля
 ### Поле "Заголовок"
